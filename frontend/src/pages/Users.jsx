@@ -1,15 +1,27 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useGetUsers } from '../hooks/use-get-users';
 import { useCreateUser } from '../hooks/use-create-user';
 import { useUpdateUser } from '../hooks/use-update-user';
 import { useDeleteUser } from '../hooks/use-delete-user';
 import { Plus } from 'lucide-react';
 import ConfirmationModal from '../components/molecules/ConfirmationModal';
+import Pagination from '../components/molecules/Pagination';
 import UserTable from '../components/organisms/UserTable';
 import UserModal from '../components/organisms/UserModal';
 
 const Users = () => {
-    const { data: users = [], isLoading } = useGetUsers();
+    const [searchParams, setSearchParams] = useSearchParams();
+    
+    // Parse with fallback to default values to avoid NaN
+    const currentPage = Math.max(1, parseInt(searchParams.get('page')) || 1);
+    const itemsPerPage = Math.max(1, parseInt(searchParams.get('limit')) || 10);
+    
+    const { data, isLoading } = useGetUsers(currentPage, itemsPerPage);
+    const users = data?.users || [];
+    const totalItems = data?.total || 0;
+    const totalPages = data?.totalPages || 1;
+    
     const createUser = useCreateUser();
     const updateUser = useUpdateUser();
     const deleteUser = useDeleteUser();
@@ -67,6 +79,11 @@ const Users = () => {
         setIsModalOpen(true);
     };
 
+    const handlePageChange = (page) => {
+        setSearchParams({ page: page.toString(), limit: itemsPerPage.toString() });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex justify-between items-end">
@@ -88,11 +105,20 @@ const Users = () => {
                     <div className="w-8 h-8 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div>
                 </div>
             ) : (
-                <UserTable
-                    users={users}
-                    onEdit={openEditModal}
-                    onDelete={handleDeleteClick}
-                />
+                <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 overflow-hidden">
+                    <UserTable
+                        users={users}
+                        onEdit={openEditModal}
+                        onDelete={handleDeleteClick}
+                    />
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        totalItems={totalItems}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={handlePageChange}
+                    />
+                </div>
             )}
 
             <UserModal

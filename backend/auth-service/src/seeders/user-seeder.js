@@ -1,22 +1,24 @@
 import bcrypt from "bcryptjs";
 import { User } from "../repository/user-repository.js";
 import { sequelize } from "../repository/sequelize.js";
+import fs from "fs";
+import path from "path";
 
 export const seedUsers = async () => {
     try {
+        // Delete existing database file for clean slate
+        const dbPath = path.resolve(process.cwd(), "auth.sqlite");
+        if (fs.existsSync(dbPath)) {
+            fs.unlinkSync(dbPath);
+            console.log("✓ Deleted existing database file");
+        }
+
         await sequelize.authenticate();
         console.log("Database connection established.");
 
-        // Sync database
-        await User.sync({ alter: true });
-        console.log("User table synced.");
-
-        // Check if users already exist
-        const count = await User.count();
-        if (count > 0) {
-            console.log(`Database already has ${count} user(s). Skipping seeding.`);
-            return;
-        }
+        // Sync database (will create new tables)
+        await User.sync({ force: true });
+        console.log("User table created.");
 
         // Hash passwords
         const hashedPassword = await bcrypt.hash("password123", 10);

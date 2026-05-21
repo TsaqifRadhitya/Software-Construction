@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useGetProducts } from '../hooks/use-get-products';
 import { useCreateProduct } from '../hooks/use-create-product';
 import { useUpdateProduct } from '../hooks/use-update-product';
@@ -6,12 +7,23 @@ import { useDeleteProduct } from '../hooks/use-delete-product';
 import { AuthContext } from '../context/AuthContext';
 import { Plus } from 'lucide-react';
 import ConfirmationModal from '../components/molecules/ConfirmationModal';
+import Pagination from '../components/molecules/Pagination';
 import ProductGrid from '../components/organisms/ProductGrid';
 import ProductModal from '../components/organisms/ProductModal';
 
 const Products = () => {
     const { user } = useContext(AuthContext);
-    const { data: products = [], isLoading } = useGetProducts();
+    const [searchParams, setSearchParams] = useSearchParams();
+    
+    // Parse with fallback to default values to avoid NaN
+    const currentPage = Math.max(1, parseInt(searchParams.get('page')) || 1);
+    const itemsPerPage = Math.max(1, parseInt(searchParams.get('limit')) || 6);
+    
+    const { data, isLoading } = useGetProducts(currentPage, itemsPerPage);
+    const products = data?.products || [];
+    const totalItems = data?.total || 0;
+    const totalPages = data?.totalPages || 1;
+    
     const createProduct = useCreateProduct();
     const updateProduct = useUpdateProduct();
     const deleteProduct = useDeleteProduct();
@@ -85,6 +97,11 @@ const Products = () => {
         setIsModalOpen(true);
     };
 
+    const handlePageChange = (page) => {
+        setSearchParams({ page: page.toString(), limit: itemsPerPage.toString() });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex justify-between items-end">
@@ -108,11 +125,22 @@ const Products = () => {
                     <div className="w-8 h-8 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></div>
                 </div>
             ) : (
-                <ProductGrid
-                    products={products}
-                    onEdit={openEditModal}
-                    onDelete={handleDeleteClick}
-                />
+                <div className="space-y-6">
+                    <ProductGrid
+                        products={products}
+                        onEdit={openEditModal}
+                        onDelete={handleDeleteClick}
+                    />
+                    <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 overflow-hidden">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            totalItems={totalItems}
+                            itemsPerPage={itemsPerPage}
+                            onPageChange={handlePageChange}
+                        />
+                    </div>
+                </div>
             )}
 
             <ProductModal

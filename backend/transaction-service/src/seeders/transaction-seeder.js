@@ -1,21 +1,23 @@
 import { Transaction } from "../repository/transaction-repository.js";
 import { sequelize } from "../lib/sequalize.js";
+import fs from "fs";
+import path from "path";
 
 export const seedTransactions = async () => {
     try {
+        // Delete existing database file for clean slate
+        const dbPath = path.resolve(process.cwd(), "database.sqlite");
+        if (fs.existsSync(dbPath)) {
+            fs.unlinkSync(dbPath);
+            console.log("✓ Deleted existing database file");
+        }
+
         await sequelize.authenticate();
         console.log("Database connection established.");
 
-        // Sync database
-        await Transaction.sync({ alter: true });
-        console.log("Transaction table synced.");
-
-        // Check if transactions already exist
-        const count = await Transaction.count();
-        if (count > 0) {
-            console.log(`Database already has ${count} transaction(s). Skipping seeding.`);
-            return;
-        }
+        // Sync database (will create new tables)
+        await Transaction.sync({ force: true });
+        console.log("Transaction table created.");
 
         // Create sample transactions
         // Note: user_id references users from auth-service (1=admin, 2-4=users)
