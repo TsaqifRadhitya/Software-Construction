@@ -24,9 +24,10 @@ class ProductService implements ProductServiceInterface
         $usersMap = [];
         if ($userIds) {
             try {
+                $authServiceUrl = env('AUTH_SERVICE_URL', 'http://auth_service:3001');
                 $response = Http::withHeaders(array_filter([
                     'Authorization' => $authHeader
-                ]))->timeout(3)->get("http://auth_service:3001/users?ids={$userIds}");
+                ]))->timeout(3)->get("{$authServiceUrl}/users?ids={$userIds}");
                 if ($response->successful()) {
                     $users = $response->json('data.rows') ?? [];
                     foreach ($users as $user) {
@@ -53,9 +54,10 @@ class ProductService implements ProductServiceInterface
         if ($product && $product->user_id) {
             $owner = null;
             try {
+                $authServiceUrl = env('AUTH_SERVICE_URL', 'http://auth_service:3001');
                 $response = Http::withHeaders(array_filter([
                     'Authorization' => $authHeader
-                ]))->timeout(3)->get("http://auth_service:3001/users/{$product->user_id}");
+                ]))->timeout(3)->get("{$authServiceUrl}/users/{$product->user_id}");
                 if ($response->successful()) {
                     $owner = $response->json('data') ?? null;
                 }

@@ -103,6 +103,33 @@ Aplikasi full-stack berbasis **microservices** yang dibangun menggunakan **React
 - [Node.js 22+](https://nodejs.org/) (for local development only)
 - [PHP 8+](https://www.php.net/) & [Composer](https://getcomposer.org/) (for local development only)
 
+### Environment Setup
+
+**IMPORTANT**: Setup environment variables sebelum menjalankan aplikasi.
+
+```bash
+# 1. Frontend
+cd frontend
+cp .env.example .env
+
+# 2. Auth Service
+cd backend/auth-service
+cp .env.example .env
+# Edit .env dan ganti JWT_SECRET dengan value yang secure
+
+# 3. Transaction Service
+cd backend/transaction-service
+cp .env.example .env
+# Edit .env dan ganti JWT_SECRET (HARUS SAMA dengan auth-service)
+
+# 4. Product Service
+cd backend/product-service
+cp .env.example .env
+php artisan key:generate
+```
+
+📚 **Dokumentasi Lengkap**: [ENVIRONMENT_VARIABLES.md](./ENVIRONMENT_VARIABLES.md)
+
 ### Run with Docker (Recommended)
 
 ```bash
@@ -226,21 +253,58 @@ Semua API calls di-wrap dalam custom hooks menggunakan **TanStack React Query**:
 
 ---
 
-## 📝 Default Seeder
+## 📝 Database Seeding
 
-### Auth Service
-Seeder otomatis membuat user default saat service pertama kali start.
+Semua services memiliki seeder yang **otomatis dijalankan** saat container start via Docker Compose.
 
-### Product Service
-```php
-Product::create([
-    "name" => "buku",
-    "description" => "buku tulis",
-    "stock" => 10,
-    "price" => 3000,
-    "user_id" => 1
-]);
+### 🔐 Auth Service - Users
+| Email | Password | Role |
+|-------|----------|------|
+| admin@example.com | password123 | admin |
+| john@example.com | user123 | user |
+| jane@example.com | user123 | user |
+| bob@example.com | user123 | user |
+
+### 🛍️ Product Service - Products
+10 produk elektronik dengan harga Rp 250.000 - Rp 18.000.000
+- Laptop Gaming ROG, Samsung Galaxy S23, Mechanical Keyboard, dll.
+- Setiap produk memiliki owner (user_id dari auth-service)
+
+### 💳 Transaction Service - Transactions
+12 transaksi sample dengan total nilai **Rp 62.400.000**
+- Transaksi dari John Doe, Jane Smith, dan Bob Wilson
+- Amount sesuai dengan harga produk
+
+### Manual Seeding
+```bash
+# Auth Service
+cd backend/auth-service && npm run db:seed
+
+# Transaction Service
+cd backend/transaction-service && npm run db:seed
+
+# Product Service
+cd backend/product-service && php artisan db:seed
 ```
+
+### Reset Database
+```bash
+# Stop services
+docker-compose down
+
+# Delete databases
+rm backend/auth-service/auth.sqlite
+rm backend/transaction-service/database.sqlite
+rm backend/product-service/database/database.sqlite
+
+# Restart with fresh seed
+docker-compose up --build
+```
+
+📚 **Dokumentasi Lengkap**: 
+- [DATABASE_SEEDING.md](./DATABASE_SEEDING.md) - Complete seeding guide
+- [SEEDER_DATA_REFERENCE.md](./SEEDER_DATA_REFERENCE.md) - Detailed data reference
+- [QUICK_REFERENCE.md](./QUICK_REFERENCE.md) - Quick reference untuk testing
 
 ---
 

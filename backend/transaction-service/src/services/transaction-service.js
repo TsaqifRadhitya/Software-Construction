@@ -1,4 +1,10 @@
 import { Transaction } from "../repository/transaction-repository.js";
+import { configDotenv } from "dotenv";
+
+configDotenv();
+
+const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || 'http://auth_service:3001';
+const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || 'http://product_service:8000';
 
 export const getAllTransactions = async (page = 1, limit = 10) => {
     const offset = (page - 1) * limit;
@@ -15,7 +21,7 @@ export const createTransaction = async (amount, product_id, user_id) => {
 
 export const fetchUserInfo = async (userId, authHeader) => {
     try {
-        const res = await fetch(`http://auth_service:3001/users/${userId}`, {
+        const res = await fetch(`${AUTH_SERVICE_URL}/users/${userId}`, {
             headers: {
                 ...(authHeader && { 'Authorization': authHeader })
             }
@@ -30,7 +36,7 @@ export const fetchUserInfo = async (userId, authHeader) => {
 
 export const fetchProductInfo = async (productId, authHeader) => {
     try {
-        const res = await fetch(`http://product_service:8000/api/products/${productId}`, {
+        const res = await fetch(`${PRODUCT_SERVICE_URL}/api/products/${productId}`, {
             headers: {
                 ...(authHeader && { 'Authorization': authHeader })
             }
@@ -46,7 +52,7 @@ export const fetchProductInfo = async (productId, authHeader) => {
 export const fetchUsersBulk = async (userIds, authHeader) => {
     if (!userIds || userIds.length === 0) return {};
     try {
-        const res = await fetch(`http://auth_service:3001/users?ids=${userIds.join(',')}`, {
+        const res = await fetch(`${AUTH_SERVICE_URL}/users?ids=${userIds.join(',')}`, {
             headers: {
                 ...(authHeader && { 'Authorization': authHeader })
             }
@@ -65,7 +71,7 @@ export const fetchUsersBulk = async (userIds, authHeader) => {
 export const fetchProductsBulk = async (productIds, authHeader) => {
     if (!productIds || productIds.length === 0) return {};
     try {
-        const res = await fetch(`http://product_service:8000/api/products?ids=${productIds.join(',')}`, {
+        const res = await fetch(`${PRODUCT_SERVICE_URL}/api/products?ids=${productIds.join(',')}`, {
             headers: {
                 ...(authHeader && { 'Authorization': authHeader })
             }

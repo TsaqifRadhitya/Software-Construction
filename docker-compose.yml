@@ -18,6 +18,8 @@ services:
     volumes:
       - ./backend/auth-service:/app
       - /app/node_modules
+    command: >
+      sh -c "npm run db:seed && npm start"
 
   transaction_service:
     build:
@@ -25,6 +27,8 @@ services:
     volumes:
       - ./backend/transaction-service:/app
       - /app/node_modules
+    command: >
+      sh -c "npm run db:seed && npm start"
     
   product_service:
     build:
