@@ -1,0 +1,52 @@
+# ================================
+# Root Monorepo .gitignore
+# ================================
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ================================
+# Frontend (React / Vite)
+# ================================
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# ================================
+# Auth Service (Node.js / Express)
+# ================================
+backend/auth-service/node_modules/
+backend/auth-service/.env
+backend/auth-service/*.db
+
+# ================================
+# Transaction Service (Node.js / Express)
+# ================================
+backend/transaction-service/node_modules/
+backend/transaction-service/.env
+backend/transaction-service/*.db
+
+# ================================
+# Product Service (Laravel / PHP)
+# ================================
+backend/product-service/vendor/
+backend/product-service/node_modules/
+backend/product-service/.env
+backend/product-service/storage/*.key
+backend/product-service/storage/framework/cache/data/*
+backend/product-service/storage/framework/sessions/*
+backend/product-service/storage/framework/views/*
+backend/product-service/storage/logs/*
+backend/product-service/bootstrap/cache/*
+backend/product-service/database/*.sqlite
+
+# ================================
+# Docker
+# ================================
+*.log
