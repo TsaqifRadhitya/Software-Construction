@@ -1,5 +1,6 @@
 import { User } from "../repository/user-repository.js";
 import { Op } from "sequelize";
+import bcrypt from "bcryptjs";
 
 export const getAllUsers = async (ids = [], page = 1, limit = 10) => {
     const offset = (page - 1) * limit;
@@ -15,7 +16,17 @@ export const getUserById = async (id) => {
 };
 
 export const createUser = async (nama, role) => {
-    return await User.create({ nama, role: role || 'user' });
+    const slug = nama.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const randomSuffix = Math.floor(100 + Math.random() * 900);
+    const email = `${slug}${randomSuffix}@example.com`;
+    const hashedPassword = await bcrypt.hash("password123", 10);
+    
+    return await User.create({ 
+        nama, 
+        email, 
+        password: hashedPassword, 
+        role: role || 'user' 
+    });
 };
 
 export const updateUser = async (id, nama, role) => {

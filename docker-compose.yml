@@ -15,8 +15,6 @@ services:
   auth_service:
     build:
       context: ./backend/auth-service
-    ports:
-      - "3001:3001"
     volumes:
       - ./backend/auth-service:/app
       - /app/node_modules
@@ -24,8 +22,6 @@ services:
   transaction_service:
     build:
       context: ./backend/transaction-service
-    ports:
-      - "3000:3000"
     volumes:
       - ./backend/transaction-service:/app
       - /app/node_modules
@@ -33,8 +29,8 @@ services:
   product_service:
     build:
       context: ./backend/product-service
-    ports:
-      - "8001:8000"
     volumes:
       - ./backend/product-service:/var/www/html
       - /var/www/html/vendor
+    command: >
+      sh -c "touch database/database.sqlite && php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=8000"

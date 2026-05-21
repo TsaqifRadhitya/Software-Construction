@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Navigate, Link } from 'react-router-dom';
 import { LogIn, ArrowRight, Mail, Lock } from 'lucide-react';
+import FormField from '../components/molecules/FormField';
 
 export default function Login() {
     const [email, setEmail] = useState('');
@@ -55,33 +56,25 @@ export default function Login() {
                     )}
                     
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
-                            <div className="relative">
-                                <Mail className="absolute left-3.5 top-3.5 text-slate-400" size={20} />
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full bg-slate-900/50 border border-slate-700 text-white pl-11 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                    placeholder="Enter your email"
-                                />
-                            </div>
-                        </div>
+                        <FormField
+                            label="Email Address"
+                            type="email"
+                            required
+                            icon={Mail}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Enter your email"
+                        />
 
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">Password</label>
-                            <div className="relative">
-                                <Lock className="absolute left-3.5 top-3.5 text-slate-400" size={20} />
-                                <input
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full bg-slate-900/50 border border-slate-700 text-white pl-11 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                    placeholder="Enter your password"
-                                />
-                            </div>
-                        </div>
+                        <FormField
+                            label="Password"
+                            type="password"
+                            required
+                            icon={Lock}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Enter your password"
+                        />
                         
                         <button
                             type="submit"

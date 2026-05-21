@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Navigate, Link } from 'react-router-dom';
 import { UserPlus, ArrowRight, Mail, Lock, User } from 'lucide-react';
+import FormField from '../components/molecules/FormField';
 
 export default function Register() {
     const [nama, setNama] = useState('');
@@ -56,47 +57,35 @@ export default function Register() {
                     )}
                     
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">Full Name</label>
-                            <div className="relative">
-                                <User className="absolute left-3.5 top-3.5 text-slate-400" size={20} />
-                                <input
-                                    type="text"
-                                    value={nama}
-                                    onChange={(e) => setNama(e.target.value)}
-                                    className="w-full bg-slate-900/50 border border-slate-700 text-white pl-11 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                    placeholder="Enter your name"
-                                />
-                            </div>
-                        </div>
+                        <FormField
+                            label="Full Name"
+                            type="text"
+                            required
+                            icon={User}
+                            value={nama}
+                            onChange={(e) => setNama(e.target.value)}
+                            placeholder="Enter your name"
+                        />
 
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
-                            <div className="relative">
-                                <Mail className="absolute left-3.5 top-3.5 text-slate-400" size={20} />
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full bg-slate-900/50 border border-slate-700 text-white pl-11 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                    placeholder="Enter your email"
-                                />
-                            </div>
-                        </div>
+                        <FormField
+                            label="Email Address"
+                            type="email"
+                            required
+                            icon={Mail}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Enter your email"
+                        />
 
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">Password</label>
-                            <div className="relative">
-                                <Lock className="absolute left-3.5 top-3.5 text-slate-400" size={20} />
-                                <input
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full bg-slate-900/50 border border-slate-700 text-white pl-11 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                    placeholder="Create a password"
-                                />
-                            </div>
-                        </div>
+                        <FormField
+                            label="Password"
+                            type="password"
+                            required
+                            icon={Lock}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Create a password"
+                        />
                         
                         <button
                             type="submit"

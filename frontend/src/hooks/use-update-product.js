@@ -5,7 +5,7 @@ export const useUpdateProduct = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async ({ id, data }) => {
-            const res = await api.put(`/products/${id}`, data);
+            const res = await api.patch(`/products/${id}`, data);
             return res.data;
         },
         onSuccess: () => {

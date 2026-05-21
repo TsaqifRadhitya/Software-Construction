@@ -35,8 +35,12 @@ export const create = async (req, res) => {
     if (!nama) {
         return res.status(400).json(response(undefined, { name: "name is required" }, "Validation Exception", 400));
     }
-    const newUser = await createUser(nama, role);
-    return res.status(201).json(response(newUser, undefined, "Created", 201));
+    try {
+        const newUser = await createUser(nama, role);
+        return res.status(201).json(response(newUser, undefined, "Created", 201));
+    } catch (err) {
+        return res.status(400).json(response(undefined, undefined, err.message, 400));
+    }
 };
 
 export const update = async (req, res) => {

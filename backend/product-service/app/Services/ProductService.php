@@ -39,7 +39,7 @@ class ProductService implements ProductServiceInterface
         }
 
         $products->getCollection()->transform(function ($product) use ($usersMap) {
-            $product->owner = $usersMap[$product->user_id] ?? null;
+            $product->setAttribute('owner', $usersMap[$product->user_id] ?? null);
             return $product;
         });
 
@@ -62,7 +62,7 @@ class ProductService implements ProductServiceInterface
             } catch (\Exception $e) {
                 // service down, owner is null
             }
-            $product->owner = $owner;
+            $product->setAttribute('owner', $owner);
         }
 
         return $product;

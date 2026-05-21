@@ -1,14 +1,20 @@
-import { useContext } from 'react';
+import { useContext, useState, Suspense } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Users, Box, ShoppingCart, LogOut, Activity } from 'lucide-react';
+import ConfirmationModal from '../components/molecules/ConfirmationModal';
 
 const MainLayout = () => {
     const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
-    const handleLogout = () => {
+    const handleLogoutClick = () => {
+        setIsLogoutModalOpen(true);
+    };
+
+    const confirmLogout = () => {
         logout();
         navigate('/login');
     };
@@ -56,7 +62,7 @@ const MainLayout = () => {
                         </div>
                     </div>
                     <button 
-                        onClick={handleLogout}
+                        onClick={handleLogoutClick}
                         className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors"
                     >
                         <LogOut size={18} />
@@ -70,17 +76,34 @@ const MainLayout = () => {
                 {/* Mobile Header */}
                 <header className="md:hidden bg-slate-900 border-b border-slate-800 p-4 flex justify-between items-center">
                     <h1 className="text-lg font-bold text-indigo-400">MicroManager</h1>
-                    <button onClick={handleLogout} className="text-slate-400 hover:text-rose-400">
+                    <button onClick={handleLogoutClick} className="text-slate-400 hover:text-rose-400">
                         <LogOut size={24} />
                     </button>
                 </header>
 
                 <div className="flex-1 overflow-auto p-6 md:p-8 bg-slate-950/50">
                     <div className="max-w-6xl mx-auto">
-                        <Outlet />
+                        <Suspense fallback={
+                            <div className="flex items-center justify-center p-12">
+                                <div className="w-8 h-8 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div>
+                            </div>
+                        }>
+                            <Outlet />
+                        </Suspense>
                     </div>
                 </div>
             </main>
+
+            <ConfirmationModal
+                isOpen={isLogoutModalOpen}
+                onClose={() => setIsLogoutModalOpen(false)}
+                onConfirm={confirmLogout}
+                title="Sign Out"
+                message="Are you sure you want to sign out of your account?"
+                confirmText="Sign Out"
+                cancelText="Cancel"
+                type="logout"
+            />
         </div>
     );
 };

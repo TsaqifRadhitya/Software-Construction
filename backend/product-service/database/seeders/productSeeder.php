@@ -13,12 +13,14 @@ class productSeeder extends Seeder
      */
     public function run(): void
     {
-        Product::create([
-            "name" => "buku",
-            "description" => "buku tulis",
-            "stock" => 10,
-            "price" => 3000,
-            "user_id" => 1
-        ]);
+        if (Product::count() === 0) {
+            Product::create([
+                "name" => "buku",
+                "description" => "buku tulis",
+                "stock" => 10,
+                "price" => 3000,
+                "user_id" => 1
+            ]);
+        }
     }
 }
